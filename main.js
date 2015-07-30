@@ -7,21 +7,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var HxOverrides = function() { };
-HxOverrides.__name__ = true;
-HxOverrides.iter = function(a) {
-	return { cur : 0, arr : a, hasNext : function() {
-		return this.cur < this.arr.length;
-	}, next : function() {
-		return this.arr[this.cur++];
-	}};
-};
-var Schema = { __ename__ : true, __constructs__ : ["VString","VStringChoice","VObject"] };
-Schema.VString = ["VString",0];
-Schema.VString.toString = $estr;
-Schema.VString.__enum__ = Schema;
-Schema.VStringChoice = function(choices) { var $x = ["VStringChoice",1,choices]; $x.__enum__ = Schema; $x.toString = $estr; return $x; };
-Schema.VObject = function(fields) { var $x = ["VObject",2,fields]; $x.__enum__ = Schema; $x.toString = $estr; return $x; };
 var Editor = function(root) {
 	this.root = root;
 };
@@ -197,6 +182,15 @@ ObjectEditor.prototype = $extend(Editor.prototype,{
 		return result;
 	}
 });
+var HxOverrides = function() { };
+HxOverrides.__name__ = true;
+HxOverrides.iter = function(a) {
+	return { cur : 0, arr : a, hasNext : function() {
+		return this.cur < this.arr.length;
+	}, next : function() {
+		return this.arr[this.cur++];
+	}};
+};
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
@@ -232,6 +226,12 @@ Reflect.fields = function(o) {
 	}
 	return a;
 };
+var Schema = { __ename__ : true, __constructs__ : ["VString","VStringChoice","VObject"] };
+Schema.VString = ["VString",0];
+Schema.VString.toString = $estr;
+Schema.VString.__enum__ = Schema;
+Schema.VStringChoice = function(choices) { var $x = ["VStringChoice",1,choices]; $x.__enum__ = Schema; $x.toString = $estr; return $x; };
+Schema.VObject = function(fields) { var $x = ["VObject",2,fields]; $x.__enum__ = Schema; $x.toString = $estr; return $x; };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
 var haxe_ds_StringMap = function() {
