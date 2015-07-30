@@ -13,3 +13,5 @@ TODO:
  * support selecting one of given object schemas for a single value (e.g. for base "MapItem" there can be "House", "Turret", etc.)
  * validation
  * macro schema generation from haxe types
+ * visual styling
+ 
