@@ -9,11 +9,6 @@ function $extend(from, fields) {
 }
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
-HxOverrides.cca = function(s,index) {
-	var x = s.charCodeAt(index);
-	if(x != x) return undefined;
-	return x;
-};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -75,17 +70,17 @@ StringEditor.prototype = $extend(Editor.prototype,{
 });
 var StringChoiceEditor = function(id,choices) {
 	this.choices = choices;
+	this.elems = new haxe_ds_StringMap();
 	var tmp;
 	var _this = window.document;
 	tmp = _this.createElement("div");
 	var div = tmp;
 	div.id = id;
 	Editor.call(this,div);
-	this.radioName = id;
-	var _g1 = 0;
-	var _g = choices.length;
-	while(_g1 < _g) {
-		var index = _g1++;
+	var _g = 0;
+	while(_g < choices.length) {
+		var choice = choices[_g];
+		++_g;
 		var tmp1;
 		var _this1 = window.document;
 		tmp1 = _this1.createElement("label");
@@ -95,10 +90,14 @@ var StringChoiceEditor = function(id,choices) {
 		tmp2 = _this2.createElement("input");
 		var radio = tmp2;
 		radio.type = "radio";
-		radio.name = this.radioName;
-		radio.setAttribute("idx",index == null?"null":"" + index);
+		radio.name = id;
+		var tmp3;
+		var _this3 = this.elems;
+		if(__map_reserved[choice] != null) _this3.setReserved(choice,radio); else _this3.h[choice] = radio;
+		tmp3 = radio;
+		tmp3;
 		row.appendChild(radio);
-		var label = window.document.createTextNode(choices[index]);
+		var label = window.document.createTextNode(choice);
 		row.appendChild(label);
 		div.appendChild(row);
 	}
@@ -107,30 +106,25 @@ StringChoiceEditor.__name__ = true;
 StringChoiceEditor.__super__ = Editor;
 StringChoiceEditor.prototype = $extend(Editor.prototype,{
 	setValue: function(value) {
-		var index = Std.string(this.choices.indexOf(value));
-		var _g = 0;
-		var _g1 = window.document.getElementsByName(this.radioName);
-		while(_g < _g1.length) {
-			var elem = _g1[_g];
-			++_g;
-			var radio = elem;
-			var radioIndex = radio.getAttribute("idx");
-			radio.checked = radioIndex == index;
+		var $it0 = this.elems.keys();
+		while( $it0.hasNext() ) {
+			var choice = $it0.next();
+			var tmp;
+			var _this = this.elems;
+			if(__map_reserved[choice] != null) tmp = _this.getReserved(choice); else tmp = _this.h[choice];
+			tmp.checked = choice == value;
 		}
 	}
 	,getValue: function() {
-		var _g = 0;
-		var _g1 = window.document.getElementsByName(this.radioName);
-		while(_g < _g1.length) {
-			var elem = _g1[_g];
-			++_g;
-			var radio = elem;
-			if(radio.checked) {
-				var idx = Std.parseInt(radio.getAttribute("idx"));
-				return this.choices[idx];
-			}
+		var $it0 = this.elems.keys();
+		while( $it0.hasNext() ) {
+			var choice = $it0.next();
+			var tmp;
+			var _this = this.elems;
+			if(__map_reserved[choice] != null) tmp = _this.getReserved(choice); else tmp = _this.h[choice];
+			if(tmp.checked) return choice;
 		}
-		window.console.warn("No value checked for " + this.radioName);
+		window.console.warn("No value checked");
 		return null;
 	}
 });
@@ -210,7 +204,7 @@ Main.main = function() {
 	window.onload = function() {
 		var container = window.document.getElementById("container");
 		var editor = Editor.create("root",schema);
-		editor.setValue({ name : "House", coords : { x : 10, y : 15}});
+		editor.setValue({ name : "House", type : "post", coords : { x : 10, y : 15}});
 		container.appendChild(editor.root);
 		window.document.getElementById("submit").onclick = function() {
 			console.log(editor.getValue());
@@ -237,17 +231,6 @@ Reflect.fields = function(o) {
 		}
 	}
 	return a;
-};
-var Std = function() { };
-Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
-};
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;

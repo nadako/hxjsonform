@@ -58,26 +58,26 @@ class StringEditor extends Editor<String> {
 
 class StringChoiceEditor extends Editor<String> {
     var input:InputElement;
-    var radioName:String;
     var choices:Array<String>;
+    var elems:Map<String,InputElement>;
 
     public function new(id:String, choices:Array<String>) {
         this.choices = choices;
+        this.elems = new Map();
         var div = document.createDivElement();
         div.id = id;
         super(div);
 
-        radioName = id;
-        for (index in 0...choices.length) {
+        for (choice in choices) {
             var row = document.createLabelElement();
 
             var radio = document.createInputElement();
             radio.type = "radio";
-            radio.name = radioName;
-            radio.setAttribute("idx", Std.string(index));
+            radio.name = id;
+            elems[choice] = radio;
             row.appendChild(radio);
 
-            var label = document.createTextNode(choices[index]);
+            var label = document.createTextNode(choice);
             row.appendChild(label);
 
             div.appendChild(row);
@@ -85,23 +85,17 @@ class StringChoiceEditor extends Editor<String> {
     }
 
     public override function setValue(value:String):Void {
-        var index = Std.string(choices.indexOf(value));
-        for (elem in document.getElementsByName(radioName)) {
-            var radio:InputElement = cast elem;
-            var radioIndex = radio.getAttribute("idx");
-            radio.checked = radioIndex == index;
+        for (choice in elems.keys()) {
+            elems[choice].checked = (choice == value);
         }
     }
 
     public override function getValue():String {
-        for (elem in document.getElementsByName(radioName)) {
-            var radio:InputElement = cast elem;
-            if (radio.checked) {
-                var idx = Std.parseInt(radio.getAttribute("idx"));
-                return choices[idx];
-            }
+        for (choice in elems.keys()) {
+            if (elems[choice].checked)
+                return choice;
         }
-        console.warn("No value checked for " + radioName);
+        console.warn("No value checked");
         return null;
     }
 }
@@ -179,6 +173,7 @@ class Main {
             var editor = Editor.create("root", schema);
             editor.setValue({
                 name: "House",
+                type: "post",
                 coords: {x: 10, y: 15},
             });
             container.appendChild(editor.root);
