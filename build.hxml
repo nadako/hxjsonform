@@ -1,0 +1,5 @@
+-main Main
+-D analyzer
+-dce full
+-D js-es5
+-js main.js
